@@ -1,0 +1,8 @@
+---
+substitutions:
+  name: bedroomtemp
+  sensor_location: Bedroom
+  ip: '103'
+
+<<: !include common/esp8266.yaml
+<<: !include common/temperature_sensor_dht22.yaml

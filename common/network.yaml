@@ -1,0 +1,14 @@
+---
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_psk
+
+  manual_ip:
+    static_ip: 10.30.0.${ip}
+    subnet: 255.255.255.0
+    gateway: 10.30.0.1
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${name} Fallback Hotspot
+    password: !secret fallback_psk

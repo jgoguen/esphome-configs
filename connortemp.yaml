@@ -1,0 +1,8 @@
+---
+substitutions:
+  name: connortemp
+  sensor_location: "Connor's Room"
+  ip: "101"
+
+<<: !include common/esp8266.yaml
+<<: !include common/temperature_sensor_dht22.yaml

@@ -1,0 +1,8 @@
+---
+substitutions:
+  name: olivetemp
+  sensor_location: "Olive's Room"
+  ip: '102'
+
+<<: !include common/esp8266.yaml
+<<: !include common/temperature_sensor_dht22.yaml

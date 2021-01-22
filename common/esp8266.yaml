@@ -1,0 +1,10 @@
+---
+esphome:
+  <<: !include common_esphome.yaml
+  platform: ESP8266
+  board: nodemcuv2
+
+<<: !include network.yaml
+<<: !include ota.yaml
+<<: !include homeassistant.yaml
+<<: !include logging.yaml

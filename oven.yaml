@@ -1,0 +1,31 @@
+---
+substitutions:
+  name: oven
+  ip: '100'
+
+<<: !include common/esp8266.yaml
+<<: !include common/includes/temperature_conversion.yaml
+
+spi:
+  miso_pin: D5
+  clk_pin: D7
+
+sensor:
+  - platform: max6675
+    name: "Oven Temperature"
+    cs_pin: D6
+    update_interval: 15s
+    id: oven_sensor
+
+# Only display when the temperature goes over 150 degrees Fahrenheit (~65C)
+display:
+  platform: tm1637
+  clk_pin: D2
+  dio_pin: D1
+  update_interval: 1s
+  lambda: |-
+    if (id(oven_sensor).state > 65) {
+      it.printf("%3.0fF", ((id(oven_sensor).state * (9.0 / 5.0)) + 32.0));
+    } else {
+      it.print("    ");
+    }
