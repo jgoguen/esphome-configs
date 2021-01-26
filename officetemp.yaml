@@ -1,0 +1,8 @@
+---
+substitutions:
+  name: officetemp
+  sensor_location: "Office"
+  ip: "106"
+
+<<: !include common/esp8266.yaml
+<<: !include common/temperature_sensor_dht22.yaml
