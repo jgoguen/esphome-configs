@@ -4,6 +4,7 @@ substitutions:
   ip: '100'
 
 <<: !include common/esp8266.yaml
+<<: !include common/api.yaml
 <<: !include common/includes/temperature_conversion.yaml
 
 spi:

@@ -1,9 +1,10 @@
 ---
 esphome:
   <<: !include common_esphome.yaml
-  platform: ESP8266
-  board: nodemcuv2
+  platform: ESP32
+  board: nodemcu-32s
 
 <<: !include network.yaml
 <<: !include ota.yaml
+<<: !include api.yaml
 <<: !include logging.yaml
