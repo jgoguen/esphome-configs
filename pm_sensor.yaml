@@ -1,0 +1,39 @@
+---
+substitutions:
+  name: pmsensor
+  sensor_location: Office
+  ip: '107'
+
+<<: !include common/esp8266.yaml
+
+packages: !include_dir_named packages
+
+uart:
+  tx_pin: D6
+  rx_pin: D7
+  baud_rate: 9600
+
+sensor:
+  - platform: pmsx003
+    type: PMSX003
+    pm_1_0:
+      name: "Particulate Matter <1.0µm Concentration"
+    pm_2_5:
+      name: "Particulate Matter <2.5µm Concentration"
+    pm_10_0:
+      name: "Particulate Matter <10.0µm Concentration"
+  - <<: !include common/temperature_sensor_dht22.yaml
+
+switch:
+  - platform: gpio
+    pin:
+      number: D3
+    id: pms_set
+    name: "Start measuring"
+
+interval:
+  - interval: 120s
+    then:
+      - switch.turn_on: pms_set
+      - delay: 20s
+      - switch.turn_off: pms_set
