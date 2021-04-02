@@ -1,10 +1,6 @@
 ---
 esphome:
-  <<: !include common_esphome.yaml
+  name: ${name}
+  build_path: build/${name}
   platform: ESP32
   board: nodemcu-32s
-
-<<: !include network.yaml
-<<: !include ota.yaml
-<<: !include api.yaml
-<<: !include logging.yaml

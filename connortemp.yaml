@@ -5,5 +5,8 @@ substitutions:
   ip: "101"
 
 <<: !include common/esp8266.yaml
-<<: !include common/api.yaml
-<<: !include common/temperature_sensor_dht22.yaml
+
+packages: !include_dir_named packages
+
+sensor:
+  - <<: !include common/temperature_sensor_dht22.yaml

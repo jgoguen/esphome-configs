@@ -4,8 +4,8 @@ substitutions:
   ip: '100'
 
 <<: !include common/esp8266.yaml
-<<: !include common/api.yaml
-<<: !include common/includes/temperature_conversion.yaml
+
+packages: !include_dir_named packages
 
 spi:
   miso_pin: D5

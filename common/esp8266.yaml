@@ -1,9 +1,6 @@
 ---
 esphome:
-  <<: !include common_esphome.yaml
+  name: ${name}
+  build_path: build/${name}
   platform: ESP8266
   board: nodemcuv2
-
-<<: !include network.yaml
-<<: !include ota.yaml
-<<: !include logging.yaml

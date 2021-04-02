@@ -1,4 +1,0 @@
----
-esphome:
-  includes:
-    - temperature.h
