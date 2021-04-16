@@ -1,4 +1,10 @@
 ---
+# Note: This requires a uart section similar to the following:
+# uart:
+#   tx_pin: D6
+#   rx_pin: D7
+#   baud_rate: 9600
+
 - platform: pmsx003
   type: PMSX003
   pm_1_0:
