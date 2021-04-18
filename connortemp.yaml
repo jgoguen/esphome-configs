@@ -3,6 +3,7 @@ substitutions:
   name: connortemp
   sensor_location: "Connor's Room"
   ip: '101'
+  temp_update_seconds: '60'
 
 <<: !include common/esp8266.yaml
 

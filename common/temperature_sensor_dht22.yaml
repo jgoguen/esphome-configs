@@ -6,5 +6,5 @@
     name: '${sensor_location} Temperature'
   humidity:
     name: '${sensor_location} Humidity'
-  update_interval: 60s
-  id: ${name}_sensor
+  update_interval: '${temp_update_seconds}s'
+  id: '${name}_sensor'

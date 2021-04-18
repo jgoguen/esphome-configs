@@ -3,6 +3,7 @@ substitutions:
   name: pmsensor
   sensor_location: Office
   ip: '107'
+  temp_update_seconds: '60'
 
 <<: !include common/esp8266.yaml
 
