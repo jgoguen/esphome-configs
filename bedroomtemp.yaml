@@ -8,5 +8,25 @@ substitutions:
 
 packages: !include_dir_named packages
 
+uart:
+  tx_pin: D6
+  rx_pin: D7
+  baud_rate: 9600
+
 sensor:
+  - <<: !include common/pmsx003.yaml
   - <<: !include common/temperature_sensor_dht22.yaml
+
+switch:
+  - platform: gpio
+    pin:
+      number: D3
+    id: pms_set
+    name: "Start measuring"
+
+interval:
+  - interval: 120s
+    then:
+      - switch.turn_on: pms_set
+      - delay: 20s
+      - switch.turn_off: pms_set
