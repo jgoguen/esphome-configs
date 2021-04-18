@@ -22,7 +22,7 @@ switch:
     pin:
       number: D3
     id: pms_set
-    name: "Start measuring"
+    name: 'Start measuring'
 
 interval:
   - interval: 120s

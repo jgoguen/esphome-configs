@@ -3,8 +3,8 @@
   model: DHT22
   pin: D2
   temperature:
-    name: "${sensor_location} Temperature"
+    name: '${sensor_location} Temperature'
   humidity:
-    name: "${sensor_location} Humidity"
+    name: '${sensor_location} Humidity'
   update_interval: 60s
   id: ${name}_sensor
