@@ -4,6 +4,7 @@ substitutions:
   sensor_location: Bedroom
   ip: '103'
   temp_update_seconds: '60'
+  api_timeout: '60'
 
 <<: !include common/esp8266.yaml
 

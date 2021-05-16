@@ -2,6 +2,7 @@
 substitutions:
   name: oven
   ip: '100'
+  api_timeout: '60'
 
 <<: !include common/esp8266.yaml
 
