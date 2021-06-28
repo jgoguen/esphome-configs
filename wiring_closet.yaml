@@ -1,0 +1,14 @@
+---
+substitutions:
+  name: wiringtemp
+  sensor_location: Wiring Closet
+  ip: '105'
+  temp_update_seconds: '60'
+  api_timeout: '60'
+
+<<: !include common/esp8266.yaml
+
+packages: !include_dir_named packages
+
+sensor:
+  - <<: !include common/temperature_sensor_dht22.yaml
