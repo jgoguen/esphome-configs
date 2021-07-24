@@ -4,7 +4,9 @@
   pin: D2
   temperature:
     name: '${sensor_location} Temperature'
+    id: '${name}_temperature_sensor'
   humidity:
     name: '${sensor_location} Humidity'
+    id: '${name}_humidity_sensor'
   update_interval: '${temp_update_seconds}s'
   id: '${name}_sensor'
