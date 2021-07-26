@@ -1,0 +1,56 @@
+---
+# Note: by using this, you explicitly agree to the BSEC license agreement:
+# https://www.bosch-sensortec.com/media/boschsensortec/downloads/bsec/2017-07-17_clickthrough_license_terms_environmentalib_sw_clean.pdf
+# This requires both an i2c: section and a bme680_bsec: section. The I2C address
+# is typically 0x77 or 0x76.
+- platform: bme680_bsec
+  temperature:
+    id: '${name}_temperature'
+    name: Temperature
+    filters:
+      - offset: '-4.0'
+      - median:
+          window_size: 7
+          send_every: 7
+          send_first_at: 3
+  pressure:
+    id: '${name}_air_pressure'
+    name: Air Pressure
+  humidity:
+    id: '${name}_humidity'
+    name: Humidity
+    filters:
+      - median:
+          window_size: 7
+          send_every: 7
+          send_first_at: 3
+  gas_resistance:
+    id: '${name}_gas_resistance'
+    name: Gas Resistance
+    filters:
+      - median:
+          window_size: 7
+          send_every: 7
+          send_first_at: 3
+  iaq:
+    id: '${name}_iaq'
+    name: Indoor Air Quality
+  iaq_accuracy:
+    id: '${name}_iaq_accuracy'
+    name: Indoor Air Quality Accuracy
+  co2_equivalent:
+    id: '${name}_co2_equivalent'
+    name: CO2 Equivalent
+    filters:
+      - median:
+          window_size: 7
+          send_every: 7
+          send_first_at: 3
+  breath_voc_equivalent:
+    id: '${name}_breath_voc'
+    name: Breath VOC
+    filters:
+      - median:
+          window_size: 7
+          send_every: 7
+          send_first_at: 3
