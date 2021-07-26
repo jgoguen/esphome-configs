@@ -4,6 +4,7 @@ substitutions:
   sensor_location: Office
   ip: '107'
   temp_update_seconds: '60'
+  temperature_offset: '-0.0'
   api_timeout: '60'
 
 <<: !include common/esp8266.yaml

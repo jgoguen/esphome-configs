@@ -4,6 +4,7 @@ substitutions:
   sensor_location: Bedroom
   ip: '103'
   temp_update_seconds: '60'
+  temperature_offset: '0.0'
   api_timeout: '60'
 
 <<: !include common/esp8266.yaml
@@ -27,8 +28,8 @@ switch:
     name: 'Start measuring'
 
 interval:
-  - interval: 120s
+  - interval: 300s
     then:
       - switch.turn_on: pms_set
-      - delay: 20s
+      - delay: 30s
       - switch.turn_off: pms_set
