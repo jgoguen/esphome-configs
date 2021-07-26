@@ -3,17 +3,12 @@ substitutions:
   name: livingroomtemp
   sensor_location: 'Living Room'
   ip: '106'
+  temperature_offset: '0.0'
   temp_update_seconds: '15'
-  sleep_seconds: '300'
-  sleep_delay_seconds: '60'
 
-<<: !include common/esp8266_with_sleep.yaml
+<<: !include common/esp8266.yaml
 
 packages: !include_dir_named packages
 
 sensor:
-  - <<: !include common/temperature_sensor_dht22_push.yaml
-  - platform: adc
-    pin: VCC
-    name: VCC Voltage
-    update_interval: ${temp_update_seconds}s
+  - <<: !include common/temperature_sensor_dht22.yaml
