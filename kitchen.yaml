@@ -1,0 +1,34 @@
+---
+substitutions:
+  name: kitchenvoc
+  sensor_location: Kitchen
+  ip: '108'
+  api_timeout: '600'
+
+<<: !include common/esp32.yaml
+
+packages: !include_dir_named packages
+
+bme680_bsec:
+  address: 0x77
+  i2c_id: bus_b
+  sample_rate: lp
+
+i2c:
+  - id: bus_a
+    scl: GPIO15
+    sda: GPIO2
+  - id: bus_b
+    scl: GPIO23
+    sda: GPIO22
+
+sensor:
+  - <<: !include common/sgp30.yaml
+    i2c_id: bus_a
+  - <<: !include common/bme680_bsec.yaml
+
+text_sensor:
+  - platform: bme680_bsec
+    iaq_accuracy:
+      id: '${name}_iaq_accuracy_text'
+      name: IAQ Text Accuracy
