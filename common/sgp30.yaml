@@ -1,0 +1,23 @@
+---
+# Requires an i2c: section. The I2C address is typically 0x58.
+- platform: sgp30
+  update_interval: 1s
+  address: 0x58
+  eco2:
+    id: '${name}_eco2'
+    name: eCO2
+    accuracy_decimals: 1
+    filters:
+      - median:
+          window_size: 7
+          send_every: 7
+          send_first_at: 3
+  tvoc:
+    id: '${name}_tvoc'
+    name: Total VOC
+    accuracy_decimals: 1
+    filters:
+      - median:
+          window_size: 7
+          send_every: 7
+          send_first_at: 3
