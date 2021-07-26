@@ -12,3 +12,7 @@ wifi:
   ap:
     ssid: ${name} Fallback Hotspot
     password: !secret fallback_psk
+
+sensor:
+  - platform: wifi_signal
+    name: '${name} WiFi Signal'
