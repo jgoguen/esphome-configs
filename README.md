@@ -1,4 +1,9 @@
 # My ESPHome Configs
+
+[![ESPHome CI](https://github.com/jgoguen/esphome-configs/actions/workflows/esphome.yaml/badge.svg)](https://github.com/jgoguen/esphome-configs/actions/workflows/esphome.yaml)
+
+---
+
 Configuration files for the microcontrollers I have doing various tasks using
 [esphome](https://esphome.io). I'm making use of `!include` directives to try to
 limit duplication as much as I can.
