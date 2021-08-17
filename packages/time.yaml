@@ -1,0 +1,9 @@
+---
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: !secret timezone
+    servers:
+      - 129.134.28.123
+      - 129.134.29.123
+      - 129.134.25.123
