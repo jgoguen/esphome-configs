@@ -1,7 +1,7 @@
 ---
 name: ESPHome CI
 
-on:
+'on':
   push:
 
 jobs:
