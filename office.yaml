@@ -1,35 +1,34 @@
 ---
 substitutions:
-  name: pmsensor
+  name: officetemp
   sensor_location: Office
   ip: '107'
-  temp_update_seconds: '60'
-  temperature_offset: '-0.0'
-  api_timeout: '60'
+  api_timeout: '600'
 
-<<: !include common/esp8266.yaml
+<<: !include common/esp32.yaml
 
 packages: !include_dir_named packages
 
-uart:
-  tx_pin: D6
-  rx_pin: D7
-  baud_rate: 9600
+bme680_bsec:
+  address: 0x77
+  i2c_id: bus_b
+  sample_rate: lp
+
+i2c:
+  - id: bus_a
+    scl: GPIO15
+    sda: GPIO2
+  - id: bus_b
+    scl: GPIO23
+    sda: GPIO22
 
 sensor:
-  - <<: !include common/pmsx003.yaml
-  - <<: !include common/temperature_sensor_dht22.yaml
+  - <<: !include common/sgp30.yaml
+    i2c_id: bus_a
+  - <<: !include common/bme680_bsec.yaml
 
-switch:
-  - platform: gpio
-    pin:
-      number: D3
-    id: pms_set
-    name: 'Start measuring'
-
-interval:
-  - interval: 120s
-    then:
-      - switch.turn_on: pms_set
-      - delay: 20s
-      - switch.turn_off: pms_set
+text_sensor:
+  - platform: bme680_bsec
+    iaq_accuracy:
+      id: '${name}_iaq_accuracy_text'
+      name: IAQ Text Accuracy
