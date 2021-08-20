@@ -1,0 +1,127 @@
+---
+substitutions:
+  name: work_state_door
+  sensor_location: Office Door
+  ip: '111'
+  api_timeout: '600'
+
+<<:
+  - !include common/m5-stick-cplus.yaml
+  - !include common/office-doorbell.yaml
+
+packages: !include_dir_named packages
+
+globals:
+  - id: ack_val
+    type: bool
+    restore_value: false
+    initial_value: "false"
+  - id: made_call
+    type: bool
+    restore_value: false
+    initial_value: "false"
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO37
+      inverted: true
+    id: ${name}_button_a
+    name: ${sensor_location} Main Button
+  - platform: gpio
+    pin:
+      number: GPIO39
+      inverted: true
+    id: ${name}_button_b
+    name: ${sensor_location} Secondary Button
+
+text_sensor:
+  - platform: homeassistant
+    id: desk_state_monitor
+    entity_id: sensor.working_state
+    on_value:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: desk_state_monitor
+            format: 'Setting LED effect to %s'
+            args:
+              - 'x.c_str()'
+        - light.turn_on:
+            id: status_led
+            effect: !lambda 'return x.c_str();'
+        - component.update: tft_display
+  - platform: homeassistant
+    id: request_monitor
+    entity_id: switch.request_attention
+    on_value:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: doorstatus
+            format: 'Setting request to %s'
+            args:
+              - 'x.c_str()'
+        - if:
+            condition:
+              lambda: 'return x == "on";'
+            then:
+              - lambda: 'id(made_call) = true;'
+            else:
+              - if:
+                  condition:
+                    lambda: 'return id(made_call) == true;'
+                  then:
+                    - lambda: 'id(ack_val) = true;'
+                    - component.update: tft_display
+                    - output.turn_on: buzzer
+                    - output.ledc.set_frequency:
+                        id: buzzer
+                        frequency: "800Hz"
+                    - output.set_level:
+                        id: buzzer
+                        level: "75%"
+                    - delay: !lambda 'return 500;'
+                    - output.turn_off: buzzer
+                    - delay: 10s
+                    - lambda: 'id(ack_val) = false;'
+                    - component.update: tft_display
+              - lambda: 'id(made_call) = false;'
+        - component.update: tft_display
+
+display:
+  - platform: st7789v
+    id: tft_display
+    backlight_pin: GPIO4
+    cs_pin: GPIO5
+    dc_pin: GPIO23
+    reset_pin: GPIO18
+    rotation: 0
+    lambda: |-
+      it.print(it.get_width() / 2, 5, id(font_medium), id(white), TextAlign::TOP_CENTER, "Office Status");
+      if (id(desk_state_monitor).has_state()) {
+        auto state_str = id(desk_state_monitor).state;
+        if(state_str == "Break") {
+          it.print(it.get_width() / 2, 60, id(font_large), id(green), TextAlign::CENTER, "Not");
+          it.print(it.get_width() / 2, 90, id(font_large), id(green), TextAlign::CENTER, "Working");
+        } else if(state_str == "Work") {
+          it.print(it.get_width() / 2, 60, id(font_large), id(yellow), TextAlign::CENTER, "Working");
+        } else if(state_str == "DND") {
+          it.print(it.get_width() / 2, 60, id(font_large), id(red), TextAlign::CENTER, "Do not");
+          it.print(it.get_width() / 2, 90, id(font_large), id(red), TextAlign::CENTER, "Disturb");
+        }
+      }
+      if (id(ack_val)) {
+        it.print(it.get_width() / 2, it.get_height() - 50, id(font_large), id(green), TextAlign::CENTER, "Come In!");
+      } else if (id(request_monitor).has_state() && id(request_monitor).state == "on") {
+        it.print(it.get_width() / 2, it.get_height() - 50, id(font_large), id(yellow), TextAlign::CENTER, "Ringing");
+      }
+      it.strftime(
+        it.get_width() / 2,
+        it.get_height() - 5,
+        id(font_medium),
+        id(blue),
+        TextAlign::BASELINE_CENTER,
+        "%l:%M %p",
+        id(sntp_time).now()
+      );
