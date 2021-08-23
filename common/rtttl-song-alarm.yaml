@@ -1,0 +1,57 @@
+---
+api:
+  services:
+    - service: start_alarm
+      variables:
+        song_str: string
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: '${name}.start_alarm'
+            format: 'Starting alarm'
+        - lambda: 'id(alarm_state) = true;'
+        - while:
+            condition:
+              lambda: 'return id(alarm_state) == true;'
+            then:
+              - logger.log:
+                  level: DEBUG
+                  tag: '${name}.start_alarm'
+                  format: 'Playing alarm'
+              - rtttl.play:
+                  rtttl: !lambda 'return song_str;'
+              - delay: 1s
+
+globals:
+  # 0 = off
+  # 1 = alarm
+  - id: alarm_state
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+
+output:
+  - platform: esp8266_pwm
+    pin: D2
+    frequency: 600 Hz
+    id: buzzer_output
+
+rtttl:
+  output: buzzer_output
+  id: buzzer
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D1
+      mode: INPUT_PULLUP
+      inverted: true
+    id: ${name}_button
+    on_press:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: '${name}.stop_alarm'
+            format: 'Stopping alarm playback'
+        - lambda: 'id(alarm_state) = false;'
+        - rtttl.stop
