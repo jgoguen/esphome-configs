@@ -1,0 +1,44 @@
+---
+sensor:
+  - platform: homeassistant
+    name: HomeAssistant intensity selector
+    entity_id: input_number.${name}_led_intensity
+    on_value:
+      then:
+        - lambda: |-
+            int val = abs((int)x) % 16;
+            id(matrix_display).intensity(val);
+
+font:
+  - file: 'fonts/pixelmix.ttf'
+    id: font_normal
+    size: 6
+    glyphs:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - ':'
+      - A
+      - P
+      - M
+      - ' '
+
+spi:
+  clk_pin: D5
+  mosi_pin: D7
+
+display:
+  - platform: max7219digit
+    id: matrix_display
+    cs_pin: D6
+    num_chips: 4
+    intensity: 10
+    lambda: |-
+      it.strftime(1, 1, id(font_normal), "%l : %M", id(sntp_time).now());
