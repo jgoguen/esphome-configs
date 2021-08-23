@@ -1,0 +1,13 @@
+---
+substitutions:
+  name: connoralarm
+  sensor_location: "Connor's Room"
+  ip: '113'
+  api_timeout: '600'
+
+<<:
+  - !include common/esp8266.yaml
+  - !include common/max7219-matrix-clock.yaml
+  - !include common/rtttl-song-alarm.yaml
+
+packages: !include_dir_named packages
