@@ -20,7 +20,9 @@ api:
                   format: 'Playing alarm'
               - rtttl.play:
                   rtttl: !lambda 'return song_str;'
-              - delay: 1s
+              - wait_until:
+                  not:
+                    rtttl.is_playing
 
 globals:
   # 0 = off
