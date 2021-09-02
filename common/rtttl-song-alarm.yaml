@@ -1,6 +1,11 @@
 ---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
 api:
   services:
+    - service: stop_alarm
+      then:
+        - lambda: 'id(alarm_state) = false;'
+        - rtttl.stop
     - service: start_alarm
       variables:
         song_str: string
@@ -35,7 +40,7 @@ globals:
 output:
   - platform: esp8266_pwm
     pin: D2
-    frequency: 600 Hz
+    frequency: 1000 Hz
     id: buzzer_output
 
 rtttl:
