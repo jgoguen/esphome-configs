@@ -1,13 +1,13 @@
 ---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
 substitutions:
   name: connoralarm
   sensor_location: "Connor's Room"
   ip: '113'
   api_timeout: '600'
 
-<<:
-  - !include common/esp8266.yaml
-  - !include common/max7219-matrix-clock.yaml
-  - !include common/rtttl-song-alarm.yaml
-
-packages: !include_dir_named packages
+packages:
+  <<: !include_dir_named packages
+  board: !include common/esp8266.yaml
+  clock: !include common/tm1637-clock.yaml
+  alarm: !include common/rtttl-song-alarm.yaml
