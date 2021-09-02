@@ -1,0 +1,19 @@
+---
+sensor:
+  - platform: homeassistant
+    name: ${name} intensity selector
+    entity_id: input_number.${name}_led_intensity
+    on_value:
+      then:
+        - lambda: |-
+            int val = abs((int)x) % 8;
+            id(lcd_display).set_intensity(val);
+
+display:
+  platform: tm1637
+  id: lcd_display
+  clk_pin: D5
+  dio_pin: D6
+  update_interval: 1s
+  lambda: |-
+    it.strftime("%l.%M", id(sntp_time).now());
