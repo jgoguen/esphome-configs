@@ -1,0 +1,10 @@
+---
+binary_sensor:
+  - platform: gpio
+    name: ${sensor_location} Vibration Sensor
+    pin:
+      number: D7
+      mode: INPUT
+    device_class: vibration
+    filters:
+      - delayed_off: 15s
