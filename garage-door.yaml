@@ -1,0 +1,70 @@
+---
+substitutions:
+  name: garagedoor
+  sensor_location: Garage
+  ip: '120'
+  api_timeout: '600'
+
+packages:
+  <<: !include_dir_named packages
+  board: !include common/shelly1.yaml
+
+api:
+  services:
+    - service: toggle_relay
+      then:
+        - switch.turn_on: shelly_relay
+
+switch:
+  # This controls shorting 0/1
+  - platform: gpio
+    name: Garage Door Switch
+    pin: GPIO4
+    id: shelly_relay
+    # Keep the relay off after boot. This prevents accidentally opening the garage after a power outage.
+    restore_mode: ALWAYS_OFF
+    disabled_by_default: true
+    on_turn_on:
+      - delay: 1s
+      - switch.turn_off: shelly_relay
+
+binary_sensor:
+  - platform: gpio
+    name: Garage Door Sensor
+    pin: GPIO5
+    id: door_sensor
+    disabled_by_default: true
+    # small delay to prevent debouncing
+    filters:
+      - delayed_on_off: 50ms
+
+cover:
+  - platform: template
+    device_class: garage
+    name: Garage Door
+    on_open:
+      - logger.log:
+          tag: garagedoor
+          format: Garage door is open
+    on_closed:
+      - logger.log:
+          tag: garagedoor
+          format: Garage door is closed
+    open_action:
+      - if:
+          condition:
+            binary_sensor.is_off: door_sensor
+          then:
+            - switch.turn_on: shelly_relay
+    close_action:
+      - if:
+          condition:
+            binary_sensor.is_on: door_sensor
+          then:
+            - switch.turn_on: shelly_relay
+    lambda: |-
+      if (id(door_sensor).state) {
+        return COVER_OPEN;
+      } else {
+        return COVER_CLOSED;
+      }
