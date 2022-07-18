@@ -4,7 +4,7 @@ substitutions:
   name: olivealarm
   sensor_location: "Olive's Room"
   ip: '114'
-  api_timeout: '600'
+  api_timeout: '0'
 
 packages:
   <<: !include_dir_named packages

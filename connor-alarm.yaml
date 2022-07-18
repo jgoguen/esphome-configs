@@ -4,7 +4,7 @@ substitutions:
   name: connoralarm
   sensor_location: "Connor's Room"
   ip: '113'
-  api_timeout: '600'
+  api_timeout: '0'
 
 packages:
   <<: !include_dir_named packages
