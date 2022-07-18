@@ -5,7 +5,6 @@
 **/src/
 **/platformio.ini
 /build/
-/secrets.yaml
 
 # This is expected to be a symlink to the platform-specific font directory
 /fonts
