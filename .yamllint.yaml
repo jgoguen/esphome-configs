@@ -3,6 +3,9 @@ yaml-files:
   - "*.yaml"
   - ".yamllint"
 
+ignore: |
+  /secrets.yaml
+
 rules:
   braces: enable
   brackets: enable
