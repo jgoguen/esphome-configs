@@ -2,5 +2,7 @@
 # Enable Home Assistant API
 api:
   password: !secret homeassistant_password
+  encryption:
+    key: !secret api_encryption_key
   reboot_timeout: ${api_timeout}s
   id: ha_api
