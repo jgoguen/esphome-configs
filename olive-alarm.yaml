@@ -3,7 +3,6 @@
 substitutions:
   name: olivealarm
   sensor_location: "Olive's Room"
-  ip: '114'
   api_timeout: '0'
 
 packages:

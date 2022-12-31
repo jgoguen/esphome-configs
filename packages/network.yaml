@@ -1,12 +1,7 @@
 ---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_psk
-
-  manual_ip:
-    static_ip: 10.30.0.${ip}
-    subnet: 255.255.255.0
-    gateway: 10.30.0.1
+  networks: !secret networks
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:

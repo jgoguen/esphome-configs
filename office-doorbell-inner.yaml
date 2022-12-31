@@ -1,8 +1,8 @@
 ---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
 substitutions:
   name: work_state_desk
   sensor_location: Office Desk
-  ip: '110'
   api_timeout: '600'
 
 <<:

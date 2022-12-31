@@ -1,3 +1,4 @@
 ---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
 ota:
   password: !secret ota_password

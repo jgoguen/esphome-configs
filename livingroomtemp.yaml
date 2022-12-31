@@ -1,8 +1,8 @@
 ---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
 substitutions:
   name: livingroomtemp
   sensor_location: 'Living Room'
-  ip: '106'
   temperature_offset: '0.0'
   temp_update_seconds: '15'
 

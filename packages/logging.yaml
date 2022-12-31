@@ -1,4 +1,5 @@
 ---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
 # Enable logging
 logger:
   level: DEBUG

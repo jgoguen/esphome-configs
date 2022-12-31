@@ -1,7 +1,8 @@
 ---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
 substitutions:
   name: oven
-  ip: '100'
+  sensor_location: Kitchen
   api_timeout: '60'
 
 <<: !include common/esp8266.yaml
