@@ -11,3 +11,12 @@ wifi:
 sensor:
   - platform: wifi_signal
     name: '${name} WiFi Signal'
+    id: '${name}_wifi_db'
+
+  - platform: copy
+    source_id: '${name}_wifi_db'
+    name: '${name} WiFi Signal Percent'
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: '%'
+    entity_category: 'diagnostic'
