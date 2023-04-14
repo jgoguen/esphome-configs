@@ -20,3 +20,12 @@ sensor:
       - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
     unit_of_measurement: '%'
     entity_category: 'diagnostic'
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ${name} IP Addres
+      entity_category: 'diagnostic'
+    mac_address:
+      name: ${name} MAC Address
+      entity_category: 'diagnostic'
