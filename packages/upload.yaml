@@ -1,0 +1,5 @@
+---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
+esphome:
+  platformio_options:
+    upload_speed: 115200
