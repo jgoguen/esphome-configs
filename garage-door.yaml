@@ -3,7 +3,7 @@
 substitutions:
   name: garagedoor
   sensor_location: Garage
-  api_timeout: '600'
+  api_timeout: '0'
 
 packages:
   <<: !include_dir_named packages
