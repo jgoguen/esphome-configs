@@ -1,0 +1,29 @@
+---
+# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
+
+<<: !include shelly1.yaml
+
+switch:
+  # This controls shorting 0/1
+  - platform: gpio
+    name: ${name} Light Switch
+    pin: GPIO4
+    id: ${name}_light_switch
+    device_class: switch
+    # Keep the relay off after reboot. This prevents turning lights
+    # on after a power outage overnight.
+    restore_mode: RESTORE_DEFAULT_OFF
+
+binary_sensor:
+  - platform: gpio
+    name: ${name} Button
+    pin: GPIO5
+    id: ${name}_button
+    # Keep this out of Home Asistant
+    disabled_by_default: true
+    # Small delay to prevent debouncing
+    filters:
+      - delayed_on_off: 50ms
+    on_state:
+      then:
+        - switch.toggle: ${name}_light_switch
