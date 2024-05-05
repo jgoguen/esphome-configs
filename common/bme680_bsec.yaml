@@ -9,7 +9,7 @@
     id: '${name}_temperature'
     name: Temperature
     filters:
-      - offset: '${bme680_temp_offset}'
+      - offset: ${temperature_offset}
       - median:
           window_size: 7
           send_every: 7

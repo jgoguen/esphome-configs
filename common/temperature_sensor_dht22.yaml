@@ -20,5 +20,5 @@
           window_size: 7
           send_every: 5
           send_first_at: 3
-  update_interval: '${temp_update_seconds}s'
+  update_interval: '${update_interval}s'
   id: '${name}_sensor'

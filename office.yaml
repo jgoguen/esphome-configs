@@ -1,7 +1,7 @@
 ---
 # vim: filetype=esphome:syntax=yaml:
 substitutions:
-  name: officetemp
+  name: office
   sensor_location: Office
   api_timeout: '600'
   bme680_temp_offset: '0.0'
@@ -26,7 +26,7 @@ i2c:
 sensor:
   - <<: !include common/sgp30.yaml
     i2c_id: bus_a
-  - <<: !include common/bme680_bsec.yaml
+  - <<: !include { file: common/bme680_bsec.yaml, vars: {temperature_offset: 0.0} }
 
 text_sensor:
   - platform: bme680_bsec

@@ -1,14 +1,13 @@
 ---
 # vim: filetype=esphome:syntax=yaml:
 substitutions:
-  name: livingroomtemp
-  sensor_location: 'Living Room'
-  temperature_offset: '0.0'
-  temp_update_seconds: '15'
+	name: livingroomtemp
+	sensor_location: 'Living Room'
+	api_timeout: '600'
 
 <<: !include common/esp8266.yaml
 
 packages: !include_dir_named packages
 
 sensor:
-  - <<: !include common/temperature_sensor_dht22.yaml
+	- <<: !include { file: common/temperature_sensor_dht22.yaml, vars: {temperature_offset: '0.0', update_interval: '15'} }
