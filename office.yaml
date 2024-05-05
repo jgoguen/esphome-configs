@@ -4,16 +4,13 @@ substitutions:
   name: office
   sensor_location: Office
   api_timeout: '600'
-  bme680_temp_offset: '0.0'
 
-<<: !include common/esp32.yaml
+<<:
+  - !include common/esp32.yaml
+  - !include { file: common/sgp30.yaml, vars: {i2c_bus: bus_a} }
+  - !include { file: common/bme680_bsec.yaml, vars: {temperature_offset: 0.0, i2c_address: 0x77, i2c_bus: bus_b} }
 
 packages: !include_dir_named packages
-
-bme680_bsec:
-  address: 0x77
-  i2c_id: bus_b
-  sample_rate: lp
 
 i2c:
   - id: bus_a
@@ -22,14 +19,3 @@ i2c:
   - id: bus_b
     scl: GPIO23
     sda: GPIO22
-
-sensor:
-  - <<: !include common/sgp30.yaml
-    i2c_id: bus_a
-  - <<: !include { file: common/bme680_bsec.yaml, vars: {temperature_offset: 0.0} }
-
-text_sensor:
-  - platform: bme680_bsec
-    iaq_accuracy:
-      id: '${name}_iaq_accuracy_text'
-      name: IAQ Text Accuracy
