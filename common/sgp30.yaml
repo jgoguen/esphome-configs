@@ -1,5 +1,5 @@
 ---
-# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
+# vim: filetype=esphome:syntax=yaml:
 # Requires an i2c: section. The I2C address is typically 0x58.
 - platform: sgp30
   update_interval: 1s

@@ -1,5 +1,5 @@
 ---
-# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
+# vim: filetype=esphome:syntax=yaml:
 # Note: by using this, you explicitly agree to the BSEC license agreement:
 # https://www.bosch-sensortec.com/media/boschsensortec/downloads/bsec/2017-07-17_clickthrough_license_terms_environmentalib_sw_clean.pdf
 # This requires both an i2c: section and a bme680_bsec: section. The I2C address

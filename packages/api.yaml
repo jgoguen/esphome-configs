@@ -1,8 +1,7 @@
 ---
-# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
+# vim: filetype=esphome:syntax=yaml:
 # Enable Home Assistant API
 api:
-  password: !secret homeassistant_password
   encryption:
     key: !secret api_encryption_key
   reboot_timeout: ${api_timeout}s

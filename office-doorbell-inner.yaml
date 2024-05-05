@@ -1,5 +1,5 @@
 ---
-# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
+# vim: filetype=esphome:syntax=yaml:
 substitutions:
   name: work_state_desk
   sensor_location: Office Desk

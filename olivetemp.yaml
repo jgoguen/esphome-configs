@@ -1,5 +1,5 @@
 ---
-# vim: filetype=esphome:syntax=yaml:ts=2:sts=2:sw=2:expandtab:autoindent:nospell
+# vim: filetype=esphome:syntax=yaml:
 substitutions:
   name: olivetemp
   sensor_location: "Olive's Room"
