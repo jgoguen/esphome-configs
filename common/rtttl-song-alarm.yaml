@@ -26,8 +26,7 @@ api:
               - rtttl.play:
                   rtttl: !lambda 'return song_str;'
               - wait_until:
-                  not:
-                    rtttl.is_playing
+                  not: rtttl.is_playing
 
 globals:
   # 0 = off

@@ -33,4 +33,6 @@ jobs:
         run: cp -R ./.stubs/* ./
       - name: Run esphome on all files
         run: |
-          for file in $(find . -type f -name "*.yaml" -not -name "secrets.yaml" -depth 1); do esphome config "${f}"; done
+          for file in $(find . -type f -name "*.yaml" -not -name "secrets.yaml" -depth 1); do
+            esphome config "${f}"
+          done

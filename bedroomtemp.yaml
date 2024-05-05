@@ -16,7 +16,7 @@ uart:
 
 sensor:
   - <<: !include common/pmsx003.yaml
-  - <<: !include { file: common/temperature_sensor_dht22.yaml, vars: {temperature_offset: '0.0', update_interval: '60'} }
+  - <<: !include {file: common/temperature_sensor_dht22.yaml, vars: {temperature_offset: '0.0', update_interval: '60'}}
 
 switch:
   - platform: gpio
