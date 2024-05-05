@@ -7,12 +7,10 @@ substitutions:
 
 <<: !include common/esp32.yaml
 
-packages: !include_dir_named packages
-
-bme680_bsec:
-  address: 0x77
-  i2c_id: bus_b
-  sample_rate: lp
+packages:
+  <<: !include_dir_named packages
+  sgp30: !include {file: common/sgp30.yaml, vars: {i2c_bus: bus_a}}
+  bme680: !include {file: common/bme680_bsec.yaml, vars: {temperature_offset: 0.0, i2c_address: 0x77, i2c_bus: bus_b}}
 
 i2c:
   - id: bus_a
@@ -21,14 +19,3 @@ i2c:
   - id: bus_b
     scl: GPIO23
     sda: GPIO22
-
-sensor:
-  - <<: !include common/sgp30.yaml
-    i2c_id: bus_a
-  - <<: !include common/bme680_bsec.yaml
-
-text_sensor:
-  - platform: bme680_bsec
-    iaq_accuracy:
-      id: '${name}_iaq_accuracy_text'
-      name: IAQ Text Accuracy
