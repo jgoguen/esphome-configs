@@ -11,9 +11,9 @@ jobs:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
       - name: Running YAMLlint
-        uses: "docker://pipelinecomponents/yamllint:latest"
+        uses: ansible-actions/yamllint-action@v0.0.2
         with:
-          args: yamllint .
+          target: './'
   esphome:
     runs-on: ubuntu-latest
     needs:
