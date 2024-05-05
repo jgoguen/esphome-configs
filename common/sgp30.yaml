@@ -1,6 +1,7 @@
 ---
 # vim: filetype=esphome:syntax=yaml:
-# Requires an i2c: section. The I2C address is typically 0x58.
+# Requires an i2c: section. The I2C address is typically 0x58, check your
+# esphome config logs for the detected address if needed.
 sensor:
   - platform: sgp30
     update_interval: 1s

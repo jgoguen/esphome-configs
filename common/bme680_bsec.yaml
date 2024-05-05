@@ -2,7 +2,7 @@
 # vim: filetype=esphome:syntax=yaml:
 # Note: by using this, you explicitly agree to the BSEC license agreement:
 # https://www.bosch-sensortec.com/media/boschsensortec/downloads/bsec/2017-07-17_clickthrough_license_terms_environmentalib_sw_clean.pdf
-# This requires an i2c: section. The I2C address is typically 0x77 or 0x76.
+# This requires an i2c: section. The I2C address is typically 0x77 or 0x76, check your esphome config logs for the detected address if needed.
 bme680_bsec:
   address: ${i2c_address}
   i2c_id: ${i2c_bus}
