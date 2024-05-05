@@ -4,6 +4,7 @@
 **/lib/
 **/src/
 **/platformio.ini
+**/__pycache__/
 /build/
 
 # This is expected to be a symlink to the platform-specific font directory
