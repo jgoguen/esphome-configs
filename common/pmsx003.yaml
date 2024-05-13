@@ -6,11 +6,12 @@
 #   rx_pin: D7
 #   baud_rate: 9600
 
-- platform: pmsx003
-  type: PMSX003
-  pm_1_0:
-    name: '${sensor_location} Particulate Matter <1.0µm Concentration'
-  pm_2_5:
-    name: '${sensor_location} Particulate Matter <2.5µm Concentration'
-  pm_10_0:
-    name: '${sensor_location} Particulate Matter <10.0µm Concentration'
+sensor:
+  - platform: pmsx003
+    type: PMSX003
+    pm_1_0:
+      name: '${sensor_location} Particulate Matter <1.0µm Concentration'
+    pm_2_5:
+      name: '${sensor_location} Particulate Matter <2.5µm Concentration'
+    pm_10_0:
+      name: '${sensor_location} Particulate Matter <10.0µm Concentration'

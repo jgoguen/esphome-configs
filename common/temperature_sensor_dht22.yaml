@@ -1,24 +1,25 @@
 ---
 # vim: filetype=esphome:syntax=yaml:
-- platform: dht
-  model: DHT22
-  pin: D2
-  temperature:
-    name: '${sensor_location} Temperature'
-    id: '${name}_temperature_sensor'
-    filters:
-      - offset: '${temperature_offset}'
-      - median:
-          window_size: 7
-          send_every: 5
-          send_first_at: 3
-  humidity:
-    name: '${sensor_location} Humidity'
-    id: '${name}_humidity_sensor'
-    filters:
-      - median:
-          window_size: 7
-          send_every: 5
-          send_first_at: 3
-  update_interval: '${update_interval}s'
-  id: '${name}_sensor'
+sensor:
+  - platform: dht
+    model: DHT22
+    pin: D2
+    temperature:
+      name: '${sensor_location} Temperature'
+      id: '${name}_temperature_sensor'
+      filters:
+        - offset: '${temperature_offset}'
+        - median:
+            window_size: 7
+            send_every: 5
+            send_first_at: 3
+    humidity:
+      name: '${sensor_location} Humidity'
+      id: '${name}_humidity_sensor'
+      filters:
+        - median:
+            window_size: 7
+            send_every: 5
+            send_first_at: 3
+    update_interval: '${update_interval}s'
+    id: '${name}_sensor'

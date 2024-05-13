@@ -5,9 +5,7 @@ substitutions:
   sensor_location: Wiring Closet
   api_timeout: '60'
 
-<<: !include common/esp8266.yaml
-
-packages: !include_dir_named packages
-
-sensor:
-  - <<: !include {file: common/temperature_sensor_dht22.yaml, vars: {temperature_offset: '0.0', update_interval: '60'}}
+packages:
+  <<: !include_dir_named packages
+  board: !include common/esp8266.yaml
+  dht22: !include {file: common/temperature_sensor_dht22.yaml, vars: {temperature_offset: '0.0', update_interval: '60'}}

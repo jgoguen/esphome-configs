@@ -5,18 +5,16 @@ substitutions:
   sensor_location: Bedroom
   api_timeout: '60'
 
-<<: !include common/esp8266.yaml
-
-packages: !include_dir_named packages
+packages:
+  <<: !include_dir_named packages
+  board: !include common/esp8266.yaml
+  pmsx003: !include common/pmsx003.yaml
+  dht22: !include {file: common/temperature_sensor_dht22.yaml, vars: {temperature_offset: '0.0', update_interval: '60'}}
 
 uart:
   tx_pin: D6
   rx_pin: D7
   baud_rate: 9600
-
-sensor:
-  - <<: !include common/pmsx003.yaml
-  - <<: !include {file: common/temperature_sensor_dht22.yaml, vars: {temperature_offset: '0.0', update_interval: '60'}}
 
 switch:
   - platform: gpio

@@ -5,9 +5,9 @@ substitutions:
   sensor_location: Kitchen
   api_timeout: '60'
 
-<<: !include common/esp8266.yaml
-
-packages: !include_dir_named packages
+packages:
+  <<: !include_dir_named packages
+  board: !include common/esp8266.yaml
 
 spi:
   miso_pin: D5
