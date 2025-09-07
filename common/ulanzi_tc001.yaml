@@ -1,0 +1,250 @@
+---
+substitutions:
+  # Pin definition from https://github.com/aptonline/PixelIt_Ulanzi
+  battery_pin: GPIO34
+  buzzer_pin: GPIO15
+  ldr_pin: GPIO35
+  matrix_pin: GPIO32
+  left_button_pin: GPIO26
+  mid_button_pin: GPIO27
+  right_button_pin: GPIO14
+  scl_pin: GPIO22
+  sda_pin: GPIO21
+
+globals:
+  - id: aab_enabled
+    type: bool
+    restore_value: true
+    initial_value: "true"
+  - id: aab_min
+    type: int
+    initial_value: "25"
+  - id: aab_max
+    type: int
+    initial_value: "220"
+
+binary_sensor:
+  - id: middle_button
+    platform: gpio
+    pin:
+      number: ${mid_button_pin}
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    on_click:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.middle_button"
+            format: "Middle button click, stopping alarm playback"
+        - lambda: "id(alarm_state) = false;"
+        - rtttl.stop
+    on_double_click:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.middle_button"
+            format: "Middle button double click, showing time display"
+        - display.page.show: time_display
+  - id: left_button
+    platform: gpio
+    pin:
+      number: ${left_button_pin}
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    on_press:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.left_button"
+            format: "Left button click, showing previous display page"
+        - display.page.show_previous: ulanzi_display
+  - id: right_button
+    platform: gpio
+    pin:
+      number: ${right_button_pin}
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    on_press:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.right_button"
+            format: "Right button click, showing next display page"
+        - display.page.show_next: ulanzi_display
+
+switch:
+  - id: show_${name}_notice
+    name: Show notice for ${sensor_location}
+    icon: "mdi:information-outline"
+    platform: template
+    restore_mode: ALWAYS_OFF
+    optimistic: true
+    on_turn_on:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.show_${name}_notice"
+            format: "Showing notice for ${sensor_location}"
+        - display.page.show: notice_display
+    on_turn_off:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.show_${name}_notice"
+            format: "Hiding notice for ${sensor_location}"
+        - display.page.show: time_display
+
+number:
+  - id: ${name}_led_intensity
+    name: ${sensor_location} LED Intensity
+    icon: "mdi:led-on"
+    platform: template
+    min_value: 0
+    max_value: 100
+    optimistic: true
+    step: 1
+    restore_value: true
+    initial_value: "50"
+    unit_of_measurement: "%"
+    entity_category: config
+    on_value:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.${name}_led_intensity"
+            format: "LED intensity updated to: %.0f%%"
+            args: ["x"]
+        - light.addressable_set:
+            id: ulanzi_leds
+            color_brightness: !lambda "return x/100.0;"
+        - delay: 3s
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.${name}_led_intensity"
+            format: "LED intensity now set to: %.1f"
+            args: ["id(${name}_led_intensity).state"]
+
+text:
+  - id: ${name}_notice_text
+    name: "${sensor_location} Notice Text"
+    platform: template
+    mode: text
+    entity_category: config
+    optimistic: true
+    icon: "mdi:information-outline"
+    initial_value: ""
+    on_value:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.${name}_notice_text"
+            format: "Notice text updated to: %s"
+            args: ["id(${name}_notice_text).state.c_str()"]
+
+interval:
+  - interval: 15s
+    then:
+      - display.page.show_next: ulanzi_display
+      - component.update: ulanzi_display
+
+esphome:
+  name: ${name}
+  build_path: build/${name}
+  on_boot:
+    then:
+      - lambda: id(buzzer_output).turn_off();
+      - light.turn_on:
+          id: ulanzi_leds
+          brightness: !lambda "return id(${name}_led_intensity).state / 100.0;"
+      - display.page.show: time_display
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+    advanced:
+      ignore_efuse_custom_mac: true
+
+# Fix the constant high-pitch tone on flash
+output:
+  - id: buzzer_output
+    platform: ledc
+    pin:
+      number: ${buzzer_pin}
+      ignore_strapping_warning: true
+    frequency: "1220Hz"
+
+font:
+  - id: chunky6
+    file: https://raw.githubusercontent.com/trip5/Matrix-Fonts/refs/heads/main/6-series/MatrixChunky6.ttf
+  - id: chunky8
+    file: https://raw.githubusercontent.com/trip5/Matrix-Fonts/refs/heads/main/8-series/MatrixChunky8.ttf
+  - id: calcium_16
+    file: https://blakadder.com/assets/files/Calcium.ttf
+    size: 16
+
+light:
+  - id: ulanzi_leds
+    platform: neopixelbus
+    variant: WS2812
+    internal: true
+    pin: ${matrix_pin}
+    num_leds: 256
+    # color_correct: [30%, 30%, 30%]
+    gamma_correct: 2.0
+    restore_mode: ALWAYS_OFF
+
+color:
+  - id: pale_yellow
+    hex: "FFFF7F"
+  - id: red
+    hex: "FF0000"
+
+display:
+  - id: ulanzi_display
+    platform: addressable_light
+    addressable_light_id: ulanzi_leds
+    width: 32
+    height: 8
+    pixel_mapper: |-
+      if (y % 2 == 0) {
+        return (y * 32) + x;
+      }
+      return (y * 32) + (31 - x);
+    auto_clear_enabled: true
+    pages:
+      - id: time_display
+        lambda: |-
+          it.strftime(1, 1, id(chunky8), id(pale_yellow), TextAlign::TOP_LEFT, "%l:%M %p", id(sntp_time).now());
+      - id: notice_display
+        lambda: |-
+          it.print(1, 1, id(calcium_16), id(pale_yellow), TextAlign::TOP_LEFT, id(${name}_notice_text).state.c_str());
+    on_page_change:
+      - to: notice_display
+        then:
+          - logger.log:
+              level: DEBUG
+              tag: "ulanzi_tc001.notice_display"
+              format: "Notice display page shown"
+          - if:
+              condition:
+                switch.is_off: show_${name}_notice
+              then:
+                - logger.log:
+                    level: DEBUG
+                    tag: "ulanzi_tc001.notice_display"
+                    format: "No notices to show, returning to time display"
+                - display.page.show: time_display
+                - component.update: ulanzi_display
+      - to: time_display
+        then:
+          - logger.log:
+              level: DEBUG
+              tag: "ulanzi_tc001.time_display"
+              format: "Time display page shown"

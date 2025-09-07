@@ -10,3 +10,25 @@ packages:
   board: !include common/esp8266.yaml
   clock: !include common/tm1637-clock.yaml
   alarm: !include common/rtttl-song-alarm.yaml
+
+output:
+  - platform: esp8266_pwm
+    pin: D2
+    frequency: 1000 Hz
+    id: buzzer_output
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D1
+      mode: INPUT_PULLUP
+      inverted: true
+    id: ${name}_button
+    on_press:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: '${name}.stop_alarm'
+            format: 'Stopping alarm playback'
+        - lambda: 'id(alarm_state) = false;'
+        - rtttl.stop

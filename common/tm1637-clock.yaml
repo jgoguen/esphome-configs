@@ -1,5 +1,4 @@
 ---
-# vim: filetype=esphome:syntax=yaml:
 sensor:
   - platform: homeassistant
     name: ${name} intensity selector
