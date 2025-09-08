@@ -25,7 +25,7 @@ sensor:
 text_sensor:
   - platform: wifi_info
     ip_address:
-      name: ${name} IP Addres
+      name: ${name} IP Address
       entity_category: 'diagnostic'
     mac_address:
       name: ${name} MAC Address
