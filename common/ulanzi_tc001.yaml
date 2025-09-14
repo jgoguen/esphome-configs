@@ -12,16 +12,9 @@ substitutions:
   sda_pin: GPIO21
 
 globals:
-  - id: aab_enabled
+  - id: boot_complete
     type: bool
-    restore_value: true
-    initial_value: "true"
-  - id: aab_min
-    type: int
-    initial_value: "25"
-  - id: aab_max
-    type: int
-    initial_value: "220"
+    initial_value: "false"
 
 binary_sensor:
   - id: middle_button
@@ -83,6 +76,7 @@ switch:
     name: Show notice for ${sensor_location}
     icon: "mdi:information-outline"
     platform: template
+    entity_category: config
     restore_mode: ALWAYS_OFF
     optimistic: true
     on_turn_on:
@@ -99,6 +93,27 @@ switch:
             tag: "ulanzi_tc001.show_${name}_notice"
             format: "Hiding notice for ${sensor_location}"
         - display.page.show: time_display
+  - id: ${name}_night_mode
+    name: ${sensor_location} Night Mode
+    icon: "mdi:weather-night"
+    platform: template
+    restore_mode: RESTORE_DEFAULT_OFF
+    entity_category: config
+    optimistic: true
+    on_turn_on:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.${name}_night_mode"
+            format: "Night mode enabled"
+        - component.update: ulanzi_display
+    on_turn_off:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "ulanzi_tc001.${name}_night_mode"
+            format: "Night mode disabled"
+        - component.update: ulanzi_display
 
 number:
   - id: ${name}_led_intensity
@@ -113,6 +128,7 @@ number:
     initial_value: "50"
     unit_of_measurement: "%"
     entity_category: config
+    mode: box
     on_value:
       then:
         - logger.log:
@@ -120,15 +136,32 @@ number:
             tag: "ulanzi_tc001.${name}_led_intensity"
             format: "LED intensity updated to: %.0f%%"
             args: ["x"]
-        - light.addressable_set:
-            id: ulanzi_leds
-            color_brightness: !lambda "return x/100.0;"
-        - delay: 3s
+        - wait_until:
+            condition:
+              lambda: "return id(boot_complete) == true;"
+        - lambda: >-
+            float bri = (float)x / 100.0;
+            id(ulanzi_display)->get_light()->set_correction(bri, bri, bri);
+  - id: ${name}_notice_duration
+    name: "${sensor_location} Notice Duration"
+    icon: "mdi:timer"
+    platform: template
+    min_value: 5
+    max_value: 300
+    optimistic: true
+    step: 5
+    restore_value: true
+    initial_value: "15"
+    unit_of_measurement: "seconds"
+    entity_category: config
+    mode: box
+    on_value:
+      then:
         - logger.log:
             level: DEBUG
-            tag: "ulanzi_tc001.${name}_led_intensity"
-            format: "LED intensity now set to: %.1f"
-            args: ["id(${name}_led_intensity).state"]
+            tag: "ulanzi_tc001.${name}_notice_duration"
+            format: "Notice duration updated to: %.0f seconds"
+            args: ["x"]
 
 text:
   - id: ${name}_notice_text
@@ -141,28 +174,32 @@ text:
     initial_value: ""
     on_value:
       then:
-        - logger.log:
-            level: DEBUG
-            tag: "ulanzi_tc001.${name}_notice_text"
-            format: "Notice text updated to: %s"
-            args: ["id(${name}_notice_text).state.c_str()"]
-
-interval:
-  - interval: 15s
-    then:
-      - display.page.show_next: ulanzi_display
-      - component.update: ulanzi_display
+        - if:
+            condition:
+              and:
+                - switch.is_on: show_${name}_notice
+                - lambda: 'return id(${name}_notice_text).state != "";'
+            then:
+              - logger.log:
+                  level: DEBUG
+                  tag: "ulanzi_tc001.${name}_notice_text"
+                  format: "Notice text updated to: %s"
+                  args: ["id(${name}_notice_text).state.c_str()"]
+              - display.page.show: notice_display
 
 esphome:
   name: ${name}
   build_path: build/${name}
   on_boot:
-    then:
-      - lambda: id(buzzer_output).turn_off();
-      - light.turn_on:
-          id: ulanzi_leds
-          brightness: !lambda "return id(${name}_led_intensity).state / 100.0;"
-      - display.page.show: time_display
+    - then:
+        - lambda: id(buzzer_output).turn_off();
+        - light.turn_on:
+            id: ulanzi_leds
+            brightness: !lambda "return id(${name}_led_intensity).state / 100.0;"
+        - display.page.show: time_display
+    - priority: 500
+      then:
+        - lambda: "id(boot_complete) = true;"
 
 esp32:
   board: esp32dev
@@ -178,16 +215,13 @@ output:
     pin:
       number: ${buzzer_pin}
       ignore_strapping_warning: true
-    frequency: "1220Hz"
+    frequency: "1000Hz"
 
 font:
   - id: chunky6
     file: https://raw.githubusercontent.com/trip5/Matrix-Fonts/refs/heads/main/6-series/MatrixChunky6.ttf
   - id: chunky8
     file: https://raw.githubusercontent.com/trip5/Matrix-Fonts/refs/heads/main/8-series/MatrixChunky8.ttf
-  - id: calcium_16
-    file: https://blakadder.com/assets/files/Calcium.ttf
-    size: 16
 
 light:
   - id: ulanzi_leds
@@ -196,7 +230,6 @@ light:
     internal: true
     pin: ${matrix_pin}
     num_leds: 256
-    # color_correct: [30%, 30%, 30%]
     gamma_correct: 2.0
     restore_mode: ALWAYS_OFF
 
@@ -221,20 +254,31 @@ display:
     pages:
       - id: time_display
         lambda: |-
-          it.strftime(1, 1, id(chunky8), id(pale_yellow), TextAlign::TOP_LEFT, "%l:%M %p", id(sntp_time).now());
+          auto text_color = id(${name}_night_mode).state ? id(red) : id(pale_yellow);
+          it.strftime(1, 1, id(chunky8), text_color, TextAlign::TOP_LEFT, "%l:%M %p", id(sntp_time).now());
       - id: notice_display
         lambda: |-
-          it.print(1, 1, id(calcium_16), id(pale_yellow), TextAlign::TOP_LEFT, id(${name}_notice_text).state.c_str());
+          auto text_color = id(${name}_night_mode).state ? id(red) : id(pale_yellow);
+          it.print(0, 0, id(chunky8), text_color, TextAlign::TOP_LEFT, id(${name}_notice_text).state.c_str());
     on_page_change:
-      - to: notice_display
-        then:
-          - logger.log:
-              level: DEBUG
-              tag: "ulanzi_tc001.notice_display"
-              format: "Notice display page shown"
+      - then:
           - if:
               condition:
-                switch.is_off: show_${name}_notice
+                and:
+                  - switch.is_on: show_${name}_notice
+                  - lambda: 'return id(${name}_notice_text).state != "";'
+              then:
+                - delay: !lambda "return id(${name}_notice_duration).state * 1000;"
+                - display.page.show_next: ulanzi_display
+      - to: notice_display
+        then:
+          - if:
+              condition:
+                or:
+                  - and:
+                      - switch.is_off: show_${name}_notice
+                      - switch.is_off: ${name}_show_bed_notice
+                  - lambda: 'return id(${name}_notice_text).state == "";'
               then:
                 - logger.log:
                     level: DEBUG
@@ -242,9 +286,3 @@ display:
                     format: "No notices to show, returning to time display"
                 - display.page.show: time_display
                 - component.update: ulanzi_display
-      - to: time_display
-        then:
-          - logger.log:
-              level: DEBUG
-              tag: "ulanzi_tc001.time_display"
-              format: "Time display page shown"

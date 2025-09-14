@@ -2,10 +2,61 @@
 substitutions:
   name: connoralarm
   sensor_location: "Connor's Room"
-  api_timeout: '0'
-  page_display_time: '15s'
+  api_timeout: "0"
+  page_display_time: "15s"
 
 packages:
   <<: !include_dir_named packages
   board: !include common/ulanzi_tc001.yaml
   alarm: !include common/rtttl-song-alarm.yaml
+
+switch:
+  - id: ${name}_show_bed_notice
+    name: Show ${sensor_location} Bedtime Notice
+    icon: "mdi:bed-clock"
+    platform: template
+    restore_mode: ALWAYS_OFF
+    optimistic: true
+    on_turn_on:
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "${name}.show_${name}_bed_notice"
+            format: "Showing ${sensor_location} bedtime notice"
+        - switch.turn_on: show_${name}_notice
+
+number:
+  - id: ${name}_bed_warning_threshold
+    platform: homeassistant
+    entity_id: input_number.connor_bedtime_warning_threshold
+  - id: ${name}_bedtime_minutes
+    platform: homeassistant
+    entity_id: number.connor_minutes_until_bed
+    on_value:
+      then:
+        - if:
+            condition:
+              and:
+                - switch.is_on: ${name}_show_bed_notice
+                - lambda: "return id(${name}_bedtime_minutes).state <= id(${name}_bed_warning_threshold).state;"
+            then:
+              - text.set:
+                  id: ${name}_notice_text
+                  value: !lambda |-
+                    char buffer[16];
+                    snprintf(buffer, sizeof(buffer), "Bed:%dmin", (int)id(${name}_bedtime_minutes).state);
+                    return {buffer};
+              - display.page.show: notice_display
+
+api:
+  services:
+    - service: sound_alert
+      variables:
+        alert_str: string
+      then:
+        - logger.log:
+            level: DEBUG
+            tag: "${name}.sound_alert"
+            format: "Sounding alert"
+        - rtttl.play:
+            rtttl: !lambda "return alert_str;"
